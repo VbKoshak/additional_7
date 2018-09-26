@@ -68,8 +68,7 @@ function column(mtx, index){
 }
 
 //возврщает массив в котором [0] номер строки квадратов (0,1,2) и [1] номер столбца квадрата
-function getsquare(i,j)
-{
+function getsquare(i,j){
     let number = [];
 
     if (i < 3)
@@ -118,8 +117,7 @@ function square(mtx, i, j){
 }
 
 //решает очевидные элементы(которые не имеют другого выбора)
-function SolveSolo(final)
-{
+function SolveSolo(final){
     let changed = true;
 
     while (changed)
@@ -147,13 +145,8 @@ function SolveSolo(final)
     return final;
 }
 
-
-
-//главная выполняющая фуекция (перенести позже в солвсудоку)
-function main(matrix) {
-    let final = cloning(matrix);
-    final = SolveSolo(final);
-
+//делает из нашей рабочей матрицы "выходную"
+function unpack(final){
     let ret = [];
     for (let i = 0; i < 9; i++)
     {
@@ -163,8 +156,54 @@ function main(matrix) {
             ret[i][j] = final[i][j][0];
         }
     }
-    //console.log(ret);
     return ret;
+}
+
+//проверяет решено ли судоку (не работает)
+function issolved(mtx){
+    let full = [1,2,3,4,5,6,7,8,9];
+    for (let i = 0; i < 9; i++)
+    {
+        let condition_1 = (DeleteSimilar(full,row(mtx,i)) == [])
+        //console.log (condition_1);
+        /*
+            DeleteSimilar(full,row(mtx,i)) = [];
+            condition_1 = false;
+            ???
+        */
+        let condition_2 = (DeleteSimilar(full,column(mtx,i)) == [])
+        if (!condition_1 || !condition_2)
+        {
+            return false;
+        }
+    }
+    for (let i = 0; i < 9; i +=3)
+    {
+        for (let j = 0; j < 9; j+=3)
+        {
+            let condition = (DeleteSimilar(full,square(mtx,i,j)) == [])
+            {
+                if (!condition) return false;
+            }
+        }
+    }
+    return true;
+}
+
+//главная выполняющая фуекция (перенести позже в солвсудоку)
+function main(matrix) {
+    let final = cloning(matrix);
+    final = SolveSolo(final);
+
+    // if (issolved(final))
+    // {
+    //     console.log("solved");
+    // }
+    // else
+    // console.log("not_solved");
+    final = unpack(final);
+
+    return final;
 }
 
 
