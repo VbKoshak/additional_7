@@ -145,6 +145,77 @@ function SolveSolo(final){
     return final;
 }
 
+//метод скрытый одиночка
+function HidenSolo(final){
+    for (let i = 0; i < 9; i++) //перебираем элементы
+    {
+        for (let j = 0; j < 9; j++)
+        {
+            if (final[i][j][1] == 1) continue; //исключаем те которые уже решены
+            let length = final[i][j][2].length;
+            let found = false;
+            for (let p = 0; p < length; p++) // перебираем элементы нужной цифры
+            {
+                if (found) break;
+                let solo = true;
+                let number = final[i][j][2][p];
+                for (let z = 0; z < 9; z++) //ищем есть ли такой элемент в другом массиве элемента строки
+                {
+                    if (z == j) continue;
+                    let solution = 0;
+                    //console.log(number);
+                    let length2 = final[i][z][2].length;
+                    for (let t = 0; t < length2; t++)
+                    {
+                        if (number == final[i][z][2][t])
+                        {
+                            solo = false;
+                        };
+                    };
+                }
+                if (solo) //проверка на уникальность
+                {
+                    final[i][j][0] = number;
+                    final[i][j][1] = 1;
+                    found = true;
+                };
+                for (let z = 0; z < 9; z++) //ищем есть ли такой элемент в другом массиве элемента столбца
+                {
+                    if (z == i) continue;
+                    let solution = 0;
+                    //console.log(number);
+                    let length2 = final[z][j][2].length;
+                    for (let t = 0; t < length2; t++)
+                    {
+                        if (number == final[z][j][2][t])
+                        {
+                            solo = false;
+                        };
+                    };
+                }
+                if (solo) //проверка на уникальность
+                {
+                    final[i][j][0] = number;
+                    final[i][j][1] = 1;
+                    found = true;
+                };
+                //добавить квадраты 
+            }
+        }
+    }
+    return final;
+}
+//проверка квадратов
+function SolveSquares(final)
+{
+    let full = [1,2,3,4,5,6,7,8,9];
+
+    for (let i = 0; i < 9; i+=3)
+    {
+
+    }
+}
+
 //делает из нашей рабочей матрицы "выходную"
 function unpack(final){
     let ret = [];
@@ -194,6 +265,8 @@ function issolved(mtx){
 function main(matrix) {
     let final = cloning(matrix);
     final = SolveSolo(final);
+    final = HidenSolo(final);
+
 
     // if (issolved(final))
     // {
@@ -202,6 +275,7 @@ function main(matrix) {
     // else
     // console.log("not_solved");
     final = unpack(final);
+    console.log(final);
 
     return final;
 }
