@@ -147,67 +147,125 @@ function SolveSolo(final){
 
 //метод скрытый одиночка
 function HidenSolo(final){
-    for (let i = 0; i < 9; i++) //перебираем элементы
+    let changed = true;
+    while (changed)
     {
-        for (let j = 0; j < 9; j++)
+    changed = false;
+        for (let i = 0; i < 9; i++) //перебираем элементы
         {
-            if (final[i][j][1] == 1) continue; //исключаем те которые уже решены
-            let length = final[i][j][2].length;
-            let found = false;
-            for (let p = 0; p < length; p++) // перебираем элементы нужной цифры
+            for (let j = 0; j < 9; j++)
             {
-                if (found) break;
-                let solo = true;
-                let number = final[i][j][2][p];
-                for (let z = 0; z < 9; z++) //ищем есть ли такой элемент в другом массиве элемента строки
+                if (final[i][j][1] == 1) continue; //исключаем те которые уже решены
+                let length = final[i][j][2].length;
+                let found = false;
+                for (let p = 0; p < length; p++) // перебираем элементы нужной цифры
                 {
-                    if (z == j) continue;
-                    let solution = 0;
-                    //console.log(number);
-                    let length2 = final[i][z][2].length;
-                    for (let t = 0; t < length2; t++)
+                    if (found) break;
+                    let solo = true;
+                    let number = final[i][j][2][p];
+                    for (let z = 0; z < 9; z++) //ищем есть ли такой элемент в другом массиве элемента строки
                     {
-                        if (number == final[i][z][2][t])
+                        if (final[i][z][1] == 1) continue;
+                        if (z == j) continue;
+                        let solution = 0;
+                        //console.log(number);
+                        let length2 = final[i][z][2].length;
+                        for (let t = 0; t < length2; t++)
                         {
-                            solo = false;
+                            if (number == final[i][z][2][t])
+                            {
+
+                                solo = false;
+                            };
                         };
-                    };
-                }
-                if (solo) //проверка на уникальность
-                {
-                    final[i][j][0] = number;
-                    final[i][j][1] = 1;
-                    found = true;
-                };
-                for (let z = 0; z < 9; z++) //ищем есть ли такой элемент в другом массиве элемента столбца
-                {
-                    if (z == i) continue;
-                    let solution = 0;
-                    //console.log(number);
-                    let length2 = final[z][j][2].length;
-                    for (let t = 0; t < length2; t++)
+                    }
+                    if (solo) //проверка на уникальность
                     {
-                        if (number == final[z][j][2][t])
+                        final[i][j][0] = number;
+                        final[i][j][1] = 1;
+                        final = DeleteElement(final, number, i, j);
+                        found = true;
+                        changed = true;
+                    }
+                    else
+                    {
+                        solo = true;
+                        for (let z = 0; z < 9; z++) //ищем есть ли такой элемент в другом массиве элемента столбца
                         {
-                            solo = false;
-                        };
-                    };
+                            if (final[z][j][1] == 1) continue;
+                            if (z == i) continue;
+                            //console.log(number);
+                            let length2 = final[z][j][2].length;
+                            for (let t = 0; t < length2; t++)
+                            {
+                                if (number == final[z][j][2][t])
+                                {
+                                    solo = false;
+                                };
+                            };
+                        }
+                        if (solo) //проверка на уникальность
+                        {
+                            final[i][j][0] = number;
+                            final[i][j][1] = 1;
+                            final = DeleteElement(final, number, i, j);
+                            found = true;
+                            changed = true;
+                        }
+                        else {
+                            solo = true;
+                            let square = [];
+                            square = getsquare(i,j);
+                            //console.log(square);
+                            let lefti = square[0]*3-3,
+                                righti = square[0]*3,
+                                leftj = square[1]*3-3,
+                                rightj = square[1]*3;
+                                // console.log(lefti, righti, leftj, rightj);
+                                // console.log(i,j);
+                            for (let ii = lefti; ii < righti; ii++)
+                            {
+                                for (let jj = leftj; jj < rightj; jj++)
+                                {
+                                    if ((ii == i) && (jj == j))
+                                    {
+                                        //console.log("skiped");
+                                        continue;
+                                    }
+                                    if (final[ii][jj][1] == 1) continue;
+                                    //console.log("not_skiped");
+                                    let length2 = final[ii][jj][2].length;
+                                    for (let t = 0; t < length2; t++)
+                                    {
+                                        if (number == final[ii][jj][2][t])
+                                        {
+                                            solo = false;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            if (solo) //проверка на уникальность
+                            {
+                                //console.log("done");
+                                final[i][j][0] = number;
+                                final[i][j][1] = 1;
+                                //console.log("+")
+                                final = DeleteElement(final, number, i, j);
+                                found = true;
+                                changed = true;
+                            };
+                            //добавить квадраты
+                        }
+                    }
                 }
-                if (solo) //проверка на уникальность
-                {
-                    final[i][j][0] = number;
-                    final[i][j][1] = 1;
-                    found = true;
-                };
-                //добавить квадраты 
             }
         }
     }
     return final;
 }
 //проверка квадратов
-function SolveSquares(final)
-{
+function SolveSquares(final){
     let full = [1,2,3,4,5,6,7,8,9];
 
     for (let i = 0; i < 9; i+=3)
@@ -264,10 +322,23 @@ function issolved(mtx){
 //главная выполняющая фуекция (перенести позже в солвсудоку)
 function main(matrix) {
     let final = cloning(matrix);
+    for (let i = 0; i < 10; i++){
     final = SolveSolo(final);
     final = HidenSolo(final);
+    final = SolveSolo(final);
+    }
 
-
+    // for (let i = 0; i < 9; i++)
+    // {
+    //     for (let j = 0; j < 9; j++)
+    //     {
+    //         if (final[i][j][0] == 0)
+    //         {
+    //             console.log(i,j);
+    //             console.log(final[i][j][2]);
+    //         }
+    //     }
+    // }
     // if (issolved(final))
     // {
     //     console.log("solved");
@@ -275,12 +346,69 @@ function main(matrix) {
     // else
     // console.log("not_solved");
     final = unpack(final);
-    console.log(final);
+    //console.log(final);
 
     return final;
 }
 
-
+function DeleteElement(final, element, i, j){
+    //console.log(element, i, j);
+    //deleting from line
+    for (let z = 0; z < 9; z++) // преребираем элементы строки
+    {
+        if (final[i][z][1] == 1) continue;
+        let length = final[i][z][2].length;
+        for (let p = 0; p < length; p++) //перебираем массив элемента
+        {
+            if (element == final[i][z][2][p])
+            {
+                //console.log("line");
+                final[i][z][2].splice(p,1);
+                break;
+            }
+        }
+    }
+    //deleting from column
+    for (let z = 0; z < 9; z++) // преребираем элементы строки
+    {
+        if (final[z][j][1] == 1) continue;
+        let length = final[z][j][2].length;
+        for (let p = 0; p < length; p++) //перебираем массив элемента
+        {
+            if (element == final[z][j][2][p])
+            {
+                //console.log("column");
+                final[z][j][2].splice(p,1);
+                break;
+            }
+        }
+    }
+    //deleting from square
+    let square = getsquare(i,j);
+    let lefti = square[0]*3-3,
+        righti = square[0]*3,
+        leftj = square[1]*3-3,
+        rightj = square[1]*3;
+    for (let ii = lefti; ii < righti; ii++)
+    {
+        for (let jj = leftj; jj < rightj; jj++)
+        {
+            if ((ii == i) && (jj == j)) continue;
+            if (final[ii][jj][1] == 1) continue;
+            let length = final[ii][jj][2].length;
+            for (let p = 0; p < length; p++) //перебираем массив элемента
+            {
+                if (element == final[ii][jj][2][p])
+                {
+                    //console.log("square");
+                    final[ii][jj][2].splice(p,1);
+                    break;
+                }
+            }
+        }
+    }
+    return final;
+}
 
 module.exports = function solveSudoku(matrix) {
     // your solution
