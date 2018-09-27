@@ -351,6 +351,8 @@ function main(matrix) {
     return final;
 }
 
+//удаляет число element из массивов элементов строки столбца и квадрата элемента
+//и ж в матрице final
 function DeleteElement(final, element, i, j){
     //console.log(element, i, j);
     //deleting from line
