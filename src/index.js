@@ -168,7 +168,6 @@ function HidenSolo(final){
                         if (final[i][z][1] == 1) continue;
                         if (z == j) continue;
                         let solution = 0;
-                        //console.log(number);
                         let length2 = final[i][z][2].length;
                         for (let t = 0; t < length2; t++)
                         {
@@ -194,7 +193,6 @@ function HidenSolo(final){
                         {
                             if (final[z][j][1] == 1) continue;
                             if (z == i) continue;
-                            //console.log(number);
                             let length2 = final[z][j][2].length;
                             for (let t = 0; t < length2; t++)
                             {
@@ -216,24 +214,16 @@ function HidenSolo(final){
                             solo = true;
                             let square = [];
                             square = getsquare(i,j);
-                            //console.log(square);
                             let lefti = square[0]*3-3,
                                 righti = square[0]*3,
                                 leftj = square[1]*3-3,
                                 rightj = square[1]*3;
-                                // console.log(lefti, righti, leftj, rightj);
-                                // console.log(i,j);
                             for (let ii = lefti; ii < righti; ii++)
                             {
                                 for (let jj = leftj; jj < rightj; jj++)
                                 {
-                                    if ((ii == i) && (jj == j))
-                                    {
-                                        //console.log("skiped");
-                                        continue;
-                                    }
+                                    if ((ii == i) && (jj == j)) continue;
                                     if (final[ii][jj][1] == 1) continue;
-                                    //console.log("not_skiped");
                                     let length2 = final[ii][jj][2].length;
                                     for (let t = 0; t < length2; t++)
                                     {
@@ -247,10 +237,8 @@ function HidenSolo(final){
                             }
                             if (solo) //проверка на уникальность
                             {
-                                //console.log("done");
                                 final[i][j][0] = number;
                                 final[i][j][1] = 1;
-                                //console.log("+")
                                 final = DeleteElement(final, number, i, j);
                                 found = true;
                                 changed = true;
@@ -264,21 +252,11 @@ function HidenSolo(final){
     }
     return final;
 }
-//проверка квадратов
-function SolveSquares(final){
-    let full = [1,2,3,4,5,6,7,8,9];
-
-    for (let i = 0; i < 9; i+=3)
-    {
-
-    }
-}
 
 //просто смотрим решится ли судоку, если мы перебирём все возможные варианта какого-нибудь числа
 function Guessing(final){
     let mtx;
     mtx = copy(final);
-//    console.log(mtx);
     for (let i = 0; i < 9; i++)
     {
         for (let j = 0; j < 9; j++)
@@ -290,23 +268,40 @@ function Guessing(final){
                 {
                     final[i][j][0] = final[i][j][2][p];
                     final[i][j][1] = 1;
-                    for (let r = 0; r < 10; r++){
                     final = SolveSolo(final);
                     final = HidenSolo(final);
-                    }
-                    if (issolved(final))
-                    {
-                        //console.log("final");
-                        return final;
-                    }
+                    if (issolved(final)) return final;
                     final = copy(mtx);
-                    //console.log(mtx);
                 }
             }
         }
     }
-//    console.log(mtx);
-//    console.log(final);
+    return final; //решение не подобрано
+}
+
+function DoubleGuessing(final){
+    let mtx;
+    mtx = copy(final);
+    for (let i = 0; i < 9; i++)
+    {
+        for (let j = 0; j < 9; j++)
+        {
+            if (final[i][j][1] == 2)
+            {
+                    length = final[i][j][2].length;
+                for (let p = 0; p < length; p++)
+                {
+                    final[i][j][0] = final[i][j][2][p];
+                    final[i][j][1] = 1;
+                    final = SolveSolo(final);
+                    final = HidenSolo(final);
+                    final - Guessing(final);
+                    if (issolved(final)) return final;
+                    final = copy(mtx);
+                }
+            }
+        }
+    }
     return final; //решение не подобрано
 }
 
@@ -345,22 +340,19 @@ function issolved(mtx){
             if (ex[p] != line[p]) condition_1 = false;
             if (ex[p] != column[p]) condition_2 = false;
         }
-        // console.log(condition_1);
-        // console.log(ex);
-        // console.log(line);
         if (!condition_1 || !condition_2) return false;
         line = [];
         column = [];
     }
-    //console.log("solved");
-    //console.log(mtx);
     return true;
 }
 
+//сравнение чисел для сортировки
 function compareNumbers(a, b) {
   return a - b;
 }
 
+//функция копирования рабочей матрицы
 function copy (fromar){
     let toar = [];
     for (let i = 0; i < 9; i++)
@@ -391,61 +383,23 @@ function copy (fromar){
 //главная выполняющая фуекция (перенести позже в солвсудоку)
 function main(matrix) {
     let final = cloning(matrix);
-    for (let r = 0; r < 10; r++){
     final = SolveSolo(final);
     final = HidenSolo(final);
-    }
     if (!issolved(final))
     {
-        //console.log("abc");
         final = Guessing(final);
     };
-    //console.log (final[i][j]);
-
-    // let par;
-    //
-    // par = copy(final);
-    //
-    // final[0][0][0] = 2;
-    // console.log(par);
-    // console.log(final);
-
-    // for (let i = 0; i < 9; i++)
-    // {
-    //     for (let j = 0; j < 9; j++)
-    //     {
-    //         if (final[i][j][0] == 0)
-    //         {
-    //             console.log(i,j);
-    //             console.log(final[i][j][2]);
-    //         }
-    //     }
-    // }
-    /////////////////////
-    //for (let i = 0; i < 9; i++)
-    // {
-    //     for (let j = 0; j < 9; j++)
-    //     {
-    //         console.log(final[i][j])
-    //     }
-    // }
-    //////////////////////////
-    // if (issolved(final))
-    // {
-    //     console.log("solved");
-    // }
-    // else
-    // console.log("not_solved");
+    if (!issolved(final))
+    {
+        final = DoubleGuessing(final);
+    }
     final = unpack(final);
-    //console.log(final);
-
     return final;
 }
 
 //удаляет число element из массивов элементов строки столбца и квадрата элемента
 //и ж в матрице final
 function DeleteElement(final, element, i, j){
-    //console.log(element, i, j);
     //deleting from line
     for (let z = 0; z < 9; z++) // преребираем элементы строки
     {
@@ -455,7 +409,6 @@ function DeleteElement(final, element, i, j){
         {
             if (element == final[i][z][2][p])
             {
-                //console.log("line");
                 final[i][z][2].splice(p,1);
                 break;
             }
@@ -470,7 +423,6 @@ function DeleteElement(final, element, i, j){
         {
             if (element == final[z][j][2][p])
             {
-                //console.log("column");
                 final[z][j][2].splice(p,1);
                 break;
             }
@@ -505,6 +457,5 @@ function DeleteElement(final, element, i, j){
 
 module.exports = function solveSudoku(matrix) {
     // your solution
-
     return main(matrix);
 }
