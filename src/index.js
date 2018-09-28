@@ -274,6 +274,42 @@ function SolveSquares(final){
     }
 }
 
+//просто смотрим решится ли судоку, если мы перебирём все возможные варианта какого-нибудь числа
+function Guessing(final){
+    let mtx;
+    mtx = copy(final);
+//    console.log(mtx);
+    for (let i = 0; i < 9; i++)
+    {
+        for (let j = 0; j < 9; j++)
+        {
+            if (final[i][j][1] == 2)
+            {
+                    length = final[i][j][2].length;
+                for (let p = 0; p < length; p++)
+                {
+                    final[i][j][0] = final[i][j][2][p];
+                    final[i][j][1] = 1;
+                    for (let r = 0; r < 10; r++){
+                    final = SolveSolo(final);
+                    final = HidenSolo(final);
+                    }
+                    if (issolved(final))
+                    {
+                        //console.log("final");
+                        return final;
+                    }
+                    final = copy(mtx);
+                    //console.log(mtx);
+                }
+            }
+        }
+    }
+//    console.log(mtx);
+//    console.log(final);
+    return final; //решение не подобрано
+}
+
 //делает из нашей рабочей матрицы "выходную"
 function unpack(final){
     let ret = [];
@@ -288,45 +324,91 @@ function unpack(final){
     return ret;
 }
 
-//проверяет решено ли судоку (не работает)
+//проверяет решено ли судоку
 function issolved(mtx){
-    let full = [1,2,3,4,5,6,7,8,9];
+    let ex = [1,2,3,4,5,6,7,8,9];
+    let line = [];
+    let column = [];
     for (let i = 0; i < 9; i++)
     {
-        let condition_1 = (DeleteSimilar(full,row(mtx,i)) == [])
-        //console.log (condition_1);
-        /*
-            DeleteSimilar(full,row(mtx,i)) = [];
-            condition_1 = false;
-            ???
-        */
-        let condition_2 = (DeleteSimilar(full,column(mtx,i)) == [])
-        if (!condition_1 || !condition_2)
+        for (let j = 0; j < 9; j++)
         {
-            return false;
+            line.push(mtx[i][j][0]);
+            column.push(mtx[j][i][0]);
+        };
+        line.sort(compareNumbers);
+        column.sort(compareNumbers);
+        let condition_1 = true,
+            condition_2 = true;
+        for (let p = 0; p < 9; p++)
+        {
+            if (ex[p] != line[p]) condition_1 = false;
+            if (ex[p] != column[p]) condition_2 = false;
         }
+        // console.log(condition_1);
+        // console.log(ex);
+        // console.log(line);
+        if (!condition_1 || !condition_2) return false;
+        line = [];
+        column = [];
     }
-    for (let i = 0; i < 9; i +=3)
+    //console.log("solved");
+    //console.log(mtx);
+    return true;
+}
+
+function compareNumbers(a, b) {
+  return a - b;
+}
+
+function copy (fromar){
+    let toar = [];
+    for (let i = 0; i < 9; i++)
     {
-        for (let j = 0; j < 9; j+=3)
+        toar[i] = [];
+        for (let j = 0; j < 9; j++)
         {
-            let condition = (DeleteSimilar(full,square(mtx,i,j)) == [])
+            toar[i][j] = [];
+            toar[i][j][0] = fromar[i][j][0];
+            toar[i][j][1] = fromar[i][j][1];
+            if (fromar[i][j][1] == 2)
             {
-                if (!condition) return false;
+                let length = fromar[i][j][2].length;
+                toar[i][j][2] = [];
+                for (let z = 0; z < length; z++)
+                {
+                    toar[i][j][2].push(fromar[i][j][2][z]);
+                }
+            }
+            else {
+                toar[i][j][2] = [];
             }
         }
     }
-    return true;
+    return toar;
 }
 
 //главная выполняющая фуекция (перенести позже в солвсудоку)
 function main(matrix) {
     let final = cloning(matrix);
-    for (let i = 0; i < 10; i++){
+    for (let r = 0; r < 10; r++){
     final = SolveSolo(final);
     final = HidenSolo(final);
-    final = SolveSolo(final);
     }
+    if (!issolved(final))
+    {
+        //console.log("abc");
+        final = Guessing(final);
+    };
+    //console.log (final[i][j]);
+
+    // let par;
+    //
+    // par = copy(final);
+    //
+    // final[0][0][0] = 2;
+    // console.log(par);
+    // console.log(final);
 
     // for (let i = 0; i < 9; i++)
     // {
@@ -339,6 +421,15 @@ function main(matrix) {
     //         }
     //     }
     // }
+    /////////////////////
+    //for (let i = 0; i < 9; i++)
+    // {
+    //     for (let j = 0; j < 9; j++)
+    //     {
+    //         console.log(final[i][j])
+    //     }
+    // }
+    //////////////////////////
     // if (issolved(final))
     // {
     //     console.log("solved");
