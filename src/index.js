@@ -20,8 +20,8 @@ function cloning(mtx) {
 
 //принимает два массива и из первого убирает значения которые есть во втором
 function DeleteSimilar(ar1, ar2){
-    let temp = [];
-    let find;
+    let temp = [],
+        find;
     for (let z = 0; z < ar1.length; z ++){
         find = false;
         for (let p =0; p < ar2.length; p++)
@@ -100,8 +100,8 @@ function getsquare(i,j){
 
 //получает все значения которые уже установлены в матрице в квадрате элемента и ж
 function square(mtx, i, j){
-    let number = getsquare(i,j);
-    let temp = [];
+    let number = getsquare(i,j),
+        temp = [];
 
     for (let ii = number[0]*3-3; ii < number[0]*3; ii++)
     {
@@ -117,7 +117,7 @@ function square(mtx, i, j){
 }
 
 //решает очевидные элементы(которые не имеют другого выбора)
-function SolveSolo(final){
+function Easy(final){
     let changed = true;
 
     while (changed)
@@ -135,7 +135,7 @@ function SolveSolo(final){
                     if (final[i][j][2].length == 1)
                     {
                         final[i][j][0] = final[i][j][2][0];
-                        final[i][j][1] = 3;
+                        final[i][j][1] = 1;
                         changed = true;
                     }
                 }
@@ -145,8 +145,8 @@ function SolveSolo(final){
     return final;
 }
 
-//метод скрытый одиночка
-function HidenSolo(final){
+//если число может быть только в однм элементе строки\столбца\квадрата то оно верное
+function Solo(final){
     let changed = true;
     while (changed)
     {
@@ -173,7 +173,6 @@ function HidenSolo(final){
                         {
                             if (number == final[i][z][2][t])
                             {
-
                                 solo = false;
                             };
                         };
@@ -243,7 +242,6 @@ function HidenSolo(final){
                                 found = true;
                                 changed = true;
                             };
-                            //добавить квадраты
                         }
                     }
                 }
@@ -268,8 +266,8 @@ function Guessing(final){
                 {
                     final[i][j][0] = final[i][j][2][p];
                     final[i][j][1] = 1;
-                    final = SolveSolo(final);
-                    final = HidenSolo(final);
+                    final = Easy(final);
+                    final = Solo(final);
                     if (issolved(final)) return final;
                     final = copy(mtx);
                 }
@@ -279,6 +277,7 @@ function Guessing(final){
     return final; //решение не подобрано
 }
 
+//решаем двойным перебором
 function DoubleGuessing(final){
     let mtx;
     mtx = copy(final);
@@ -293,8 +292,8 @@ function DoubleGuessing(final){
                 {
                     final[i][j][0] = final[i][j][2][p];
                     final[i][j][1] = 1;
-                    final = SolveSolo(final);
-                    final = HidenSolo(final);
+                    final = Easy(final);
+                    final = Solo(final);
                     final - Guessing(final);
                     if (issolved(final)) return final;
                     final = copy(mtx);
@@ -321,9 +320,9 @@ function unpack(final){
 
 //проверяет решено ли судоку
 function issolved(mtx){
-    let ex = [1,2,3,4,5,6,7,8,9];
-    let line = [];
-    let column = [];
+    let ex = [1,2,3,4,5,6,7,8,9],
+        line = [],
+        column = [];
     for (let i = 0; i < 9; i++)
     {
         for (let j = 0; j < 9; j++)
@@ -383,8 +382,8 @@ function copy (fromar){
 //главная выполняющая фуекция (перенести позже в солвсудоку)
 function main(matrix) {
     let final = cloning(matrix);
-    final = SolveSolo(final);
-    final = HidenSolo(final);
+    final = Easy(final);
+    final = Solo(final);
     if (!issolved(final))
     {
         final = Guessing(final);
@@ -429,8 +428,8 @@ function DeleteElement(final, element, i, j){
         }
     }
     //deleting from square
-    let square = getsquare(i,j);
-    let lefti = square[0]*3-3,
+    let square = getsquare(i,j),
+        lefti = square[0]*3-3,
         righti = square[0]*3,
         leftj = square[1]*3-3,
         rightj = square[1]*3;
@@ -445,7 +444,6 @@ function DeleteElement(final, element, i, j){
             {
                 if (element == final[ii][jj][2][p])
                 {
-                    //console.log("square");
                     final[ii][jj][2].splice(p,1);
                     break;
                 }
